@@ -13,38 +13,27 @@ import json
 
 df = pd.read_csv('data_scopus.csv')
 
-nodes = df['EID'].values
 df = df.fillna(0)
-
-df.head()
 
 G = nx.Graph()
 
 nodes = []
-for row in df.iterrows():
-    nodes.append((row[1]['EID'], {
-        'Title': row[1]['Title'],
-        'Year': row[1]['Year'],
-        'Citations': row[1]['Cited by'],
-        'Publisher': row[1]['Publisher'],
-    }))
-
-G.add_nodes_from(nodes)
-
 edges = []
 for row in df.iterrows():
     current_paper = row[1]['EID']
     if ";" in row[1]['Author(s) ID']:
         authors = row[1]['Author(s) ID'][:-1].split(";")
-        for author in authors:
-          papers = df[df['Author(s) ID'].str.contains(author)]['EID'].values
-          if len(papers) > 0:
-            for paper in papers:
-              if paper != current_paper:
-                edges.append((current_paper, paper))
+        authname = row[1]['Authors'].split(",")
+        for author1 in authors:
+            papers = df[df['Author(s) ID'].str.contains(author)]['EID'].values
+            nodes.append(author1)
+            current_author = author1
+            for author2 in authors:
+                edges.append((author1,author2))
     else:
         continue
 
+G.add_nodes_from(nodes)
 G.add_edges_from(edges)
 
 pos = nx.drawing.circular_layout(G)
@@ -53,5 +42,28 @@ nx.draw(G, pos=pos, node_size=40)
 
 from networkx.readwrite import json_graph
 
-with open('publication_network.json', 'w') as f:
+with open('author_network.json', 'w') as f:
     json.dump(json_graph.node_link_data(G), f)
+    
+
+# for row in df.iterrows():
+    # nodes.append((row[1]['EID'], {
+        # 'Title': row[1]['Title'],
+        # 'Year': row[1]['Year'],
+        # 'Citations': row[1]['Cited by'],
+        # 'Publisher': row[1]['Publisher'],
+    # }))
+
+# for row in df.iterrows():
+    # current_paper = row[1]['EID']
+    # if ";" in row[1]['Author(s) ID']:
+        # authors = row[1]['Author(s) ID'][:-1].split(";")
+        # for author in authors:
+          # papers = df[df['Author(s) ID'].str.contains(author)]['EID'].values
+          # if len(papers) > 0:
+            # for paper in papers:
+              # if paper != current_paper:
+                # edges.append((current_paper, paper))
+    # else:
+        # continue
+
