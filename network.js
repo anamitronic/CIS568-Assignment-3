@@ -4,7 +4,7 @@ function simulate(data,svg)
     const width = parseInt(svg.attr("viewBox").split(' ')[2])
     const height = parseInt(svg.attr("viewBox").split(' ')[3])
     const main_group = svg.append("g")
-        .attr("transform", "translate(0, 50)")
+        .attr("transform", `translate(0, 50)`)
 
    //calculate degree of the nodes:
     let node_degree={}; //initiate an object
@@ -16,7 +16,7 @@ function simulate(data,svg)
 	   else {
 		   node_degree[d.source]=0
 	   }
-	   if (node.degree.hasOwnProperty(d.target))
+	   if (node_degree.hasOwnProperty(d.target))
 	   {
 		   node_degree[d.target]++
 	   }
@@ -34,7 +34,7 @@ function simulate(data,svg)
 		.interpolator(d3.interpolateViridis);
 		
 	let link_elements = main_group.append("g")
-		.attr('transform','translate(${width/2},${height/2}')
+		.attr('transform',`translate(${width/2},${height/2})`)
 		.selectAll(".line")
 		.data(data.links)
 		.enter()
@@ -49,7 +49,7 @@ function simulate(data,svg)
 	}
 	
 	let node_elements = main_group.append("g")
-		.attr('transform', 'translate(${width/2},${height/2}')
+		.attr('transform', `translate(${width/2},${height/2})`)
 		.selectAll(".circle")
 		.data(data.nodes)
 		.enter()
@@ -57,14 +57,14 @@ function simulate(data,svg)
 		.attr("class", function (d){
 			return treatPublishersClass(d.Publisher)})
 
-		.on("mouseover", function (d.data){
-			d3.selectAll("#PaperTitle").text(data.Title)
+		.on("mouseover", function (d){
+			d3.selectAll("#Paper_Title").text(data.Title)
 			node_elements.classed("inactive",true)
 			const selected_class = d3.select(this).attr("class").split(" ")[0];
 			console.log(selected_class)
 			d3.selectAll("."+selected_class).classed("inactive", false)
 		})
-		.on("mouseout", function(d.data){
+		.on("mouseout", function(d){
 			d3.select("#Paper_Title").text("")
 			d3.selectAll(".inactive").classed("inactive", false)
 		})
@@ -79,7 +79,7 @@ function simulate(data,svg)
 				return scale_radius(0)
 			}
 		})
-		.attr("fill", function (d,i) {
+		.attr("fill", function (d) {
 			return color(d.Year)
 		})
 	
