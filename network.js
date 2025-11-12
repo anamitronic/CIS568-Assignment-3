@@ -40,13 +40,13 @@ function simulate(data,svg)
 		.enter()
 		.append("line")
 		
-	let treatPublishersClass=(Publisher)=>{
-		let temp=Publisher.toString().split(' ').join('');
-		temp = temp.split(".").join('');
-		temp = temp.split(",").join('');
-		temp = temp.split("/").join('');
-		return "gr"+temp
-	}
+	// let treatPublishersClass=(Publisher)=>{
+		// let temp=Publisher.toString().split(' ').join('');
+		// temp = temp.split(".").join('');
+		// temp = temp.split(",").join('');
+		// temp = temp.split("/").join('');
+		// return "gr"+temp
+	// }
 	
 	let node_elements = main_group.append("g")
 		.attr('transform', `translate(${width/2},${height/2})`)
@@ -54,8 +54,8 @@ function simulate(data,svg)
 		.data(data.nodes)
 		.enter()
 		.append('g')
-		.attr("class", function (d){
-			return treatPublishersClass(d.Publisher)})
+		// .attr("class", function (d){
+			// return treatPublishersClass(d.Publisher)})
 
 		.on("mouseover", function (d){
 			d3.selectAll("#Paper_Title").text(data.Title)

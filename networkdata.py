@@ -10,23 +10,45 @@ Original file is located at
 import pandas as pd
 import networkx as nx
 import json
+import re
 
 df = pd.read_csv('data_scopus.csv')
 
-df = df.fillna(0)
+df = df.fillna("")
 
 G = nx.Graph()
 
 nodes = []
 edges = []
+
+def getCountry(affillist, author):
+    def clean_text(text):
+        return re.sub(r'[^\w\s]', '', text).lower().strip()
+    author_clean = clean_text(author)
+    country = ""
+    for entry in affillist:
+        entry_clean = clean_text(entry)
+        if author_clean in entry_clean:
+            words = entry.split(",")
+            country = words[-1]
+    return country.strip()
+
+print (getCountry(['Hoskins, J.A., Univ of Manitoba, Winnipeg, Canada', 'Hoskins, W.D., Univ of Manitoba, Winnipeg, Canada'], 'Hoskins W.D.'))
+
+        
 for row in df.iterrows():
+    affillist = row[1]['Authors with affiliations'].split("; ")
     current_paper = row[1]['EID']
     if ";" in row[1]['Author(s) ID']:
         authors = row[1]['Author(s) ID'][:-1].split(";")
-        authname = row[1]['Authors'].split(",")
-        for author1 in authors:
-            papers = df[df['Author(s) ID'].str.contains(author)]['EID'].values
-            nodes.append(author1)
+        authnames = row[1]['Authors'].split(", ")
+        for author1,auth1 in zip(authors,authnames):
+            affil = getCountry(affillist, auth1)
+            papers = df[df['Author(s) ID'].str.contains(author1)]['EID'].values
+            nodes.append((author1, {
+                'Author Name': auth1,
+                'Affiliation': affil,
+            }))
             current_author = author1
             for author2 in authors:
                 edges.append((author1,author2))
