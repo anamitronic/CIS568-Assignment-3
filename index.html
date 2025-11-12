@@ -15,6 +15,20 @@
             font-size: 12pt;
             font-family: sans-serif;
         }
+        #tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            pointer-events: none;
+            display: none;
+            font-family: sans-serif;
+            font-size: 12pt;
+            z-index: 1000;
+            max-width: 300px;
+            word-wrap: break-word;
+        }
         svg{
             width: 70vw;
             height: 70vw;
@@ -23,12 +37,12 @@
 
 </head>
 <body>
-<!-- <h1> Major Assignment 3 </h1> -->
+<h1> Major Assignment 3 </h1>
 <div id="Paper_Title"></div>
+<div id="tooltip"></div>
 <script>
     d3.json("author_network.json").then(function (data){
         let svg = d3.select('body').append("svg").attr("viewBox","0 0 1000 800")
-        console.log(data)
         simulate(data,svg) // main function to make network
     })
  
