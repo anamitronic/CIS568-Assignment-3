@@ -93,7 +93,8 @@ function simulate(data,svg)
 			d3.select("#Paper_Title").text("")
 			d3.selectAll(".inactive").classed("inactive", false)
 		})
-		.on("click", function (d){
+		.on("click", function (event, d){
+			console.log("Clicked node:", d);
 			let tooltip = d3.select("#tooltip");
 			let tooltipContent = `
 				<strong>Author Name:</strong> ${d['Author Name']}<br>
@@ -102,8 +103,8 @@ function simulate(data,svg)
 			`;
 			tooltip.html(tooltipContent)
 				.style("display", "block")
-				.style("left", (d3.event.pageX + 10) + "px")
-				.style("top", (d3.event.pageY - 10) + "px");
+				.style("left", (event.pageX + 10) + "px")
+				.style("top", (event.pageY - 10) + "px");
 		})
 		.on("mousemove", function(d){
 			d3.select("#tooltip").style("display", "none");

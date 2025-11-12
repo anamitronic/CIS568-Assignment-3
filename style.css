@@ -5,6 +5,23 @@ html, body {
     height: 100%;
     font-family: sans-serif;
 }
+h1 {
+    padding: 20px;
+    text-align: center;
+    font-size: large;
+    margin: 8px 0;
+}
+svg {
+    display: block;
+    padding: 10px;
+    margin: 8px auto;
+    max-width: 1000px;
+    max-height: 800px;
+    width: 100%;
+    height: auto;
+    stroke:#909090
+    border-radius: 10px;
+}
 circle{
     fill-opacity: .9;
 }
