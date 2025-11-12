@@ -25,6 +25,20 @@ function simulate(data,svg)
 	   }
    })
 
+   // Count occurrences for each affiliation
+   let affiliationCounts = {};
+   d3.map(data.nodes, function (d){
+        let affiliation = d.Affiliation;
+        if (affiliationCounts.hasOwnProperty(affiliation)) {
+            affiliationCounts[affiliation]++;
+        } else {
+            affiliationCounts[affiliation] = 1;
+        }
+        console.log("Affiliation:", affiliation, "Count:", affiliationCounts[affiliation]);
+   })
+   
+   console.log("All Affiliation Counts:", affiliationCounts);
+
 	let scale_radius = d3.scaleLinear()
 		.domain(d3.extent(Object.values(node_degree)))
 		.range([3,12])
@@ -40,13 +54,13 @@ function simulate(data,svg)
 		.enter()
 		.append("line")
 		
-	// let treatPublishersClass=(Publisher)=>{
-		// let temp=Publisher.toString().split(' ').join('');
-		// temp = temp.split(".").join('');
-		// temp = temp.split(",").join('');
-		// temp = temp.split("/").join('');
-		// return "gr"+temp
-	// }
+	let treatPublishersClass=(Publisher)=>{
+		let temp=Affiliation.toString().split(' ').join('');
+		temp = temp.split(".").join('');
+		temp = temp.split(",").join('');
+		temp = temp.split("/").join('');
+		return "gr"+temp
+	}
 	
 	let node_elements = main_group.append("g")
 		.attr('transform', `translate(${width/2},${height/2})`)
@@ -54,11 +68,11 @@ function simulate(data,svg)
 		.data(data.nodes)
 		.enter()
 		.append('g')
-		// .attr("class", function (d){
-			// return treatPublishersClass(d.Publisher)})
+		.attr("class", function (d){
+			return treatPublishersClass(d.Publisher)})
 
 		.on("mouseover", function (d){
-			d3.selectAll("#Paper_Title").text(data.Title)
+			d3.selectAll("#Paper_Title").text(data['Author Name'])
 			node_elements.classed("inactive",true)
 			const selected_class = d3.select(this).attr("class").split(" ")[0];
 			console.log(selected_class)
@@ -80,7 +94,7 @@ function simulate(data,svg)
 			}
 		})
 		.attr("fill", function (d) {
-			return color(d.Year)
+			return color(d.Affiliation)
 		})
 	
 	let ForceSimulation = d3.forceSimulation(data.nodes)
@@ -109,12 +123,12 @@ function simulate(data,svg)
 
     svg.call(d3.zoom()
         .extent([[0, 0], [width, height]])
-        .scaleExtent([1, 8])
+        .scaleExtent([1, 1])
         .on("zoom", zoomed));
     function zoomed({transform}) {
         main_group.attr("transform", transform);
     }
-	
+			
 }
 	
     /* const scale_radius = d3.scaleLinear()
@@ -188,4 +202,31 @@ function simulate(data,svg)
         .on("zoom", zoomed));
     function zoomed({transform}) {
         main_group.attr("transform", transform);
-    } */
+    } 
+	
+	// Sample data
+	const data = ['apple', 'banana', 'apple', 'orange', 'banana', 'banana'];
+
+	// Count occurrences
+	const counts = {};
+	data.forEach(item => {
+		counts[item] = (counts[item] || 0) + 1;
+	});
+
+	// Create a color scale
+	const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+	// Generate colors for each unique item
+	const uniqueItems = Object.keys(counts);
+	const colors = uniqueItems.map(item => colorScale(item));
+
+	// Output the results
+	const result = uniqueItems.map((item, index) => ({
+		item: item,
+		count: counts[item],
+		color: colors[index]
+	}));
+
+	console.log(result);
+
+	*/

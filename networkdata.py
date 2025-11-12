@@ -35,7 +35,6 @@ def getCountry(affillist, author):
    
 for row in df.iterrows():
     affillist = row[1]['Authors with affiliations'].split("; ")
-    current_paper = row[1]['EID']
     if ";" in row[1]['Author(s) ID']:
         authors = row[1]['Author(s) ID'][:-1].split(";")
         authnames = row[1]['Authors'].split(", ")
@@ -46,9 +45,11 @@ for row in df.iterrows():
                 'Author Name': auth1,
                 'Affiliation': affil,
             }))
-            current_author = author1
             for author2 in authors:
-                edges.append((author1,author2))
+                if author1 != author2:
+                    edges.append((author1,author2))
+                else:
+                    continue
     else:
         continue
 
