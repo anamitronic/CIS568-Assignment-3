@@ -32,10 +32,7 @@ def getCountry(affillist, author):
             words = entry.split(",")
             country = words[-1]
     return country.strip()
-
-print (getCountry(['Hoskins, J.A., Univ of Manitoba, Winnipeg, Canada', 'Hoskins, W.D., Univ of Manitoba, Winnipeg, Canada'], 'Hoskins W.D.'))
-
-        
+   
 for row in df.iterrows():
     affillist = row[1]['Authors with affiliations'].split("; ")
     current_paper = row[1]['EID']
