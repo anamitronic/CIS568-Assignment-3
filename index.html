@@ -32,6 +32,8 @@
         svg{
             width: 70vw;
             height: 70vw;
+            border: 2px solid #333;
+            border-radius: 50px;
         }
     </style>
 
@@ -45,9 +47,6 @@
         let svg = d3.select('body').append("svg").attr("viewBox","0 0 1000 800")
         simulate(data,svg) // main function to make network
     })
- 
-
-
 </script>
 
 </body>

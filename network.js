@@ -92,6 +92,7 @@ function simulate(data,svg)
 		.on("mouseout", function(d){
 			d3.select("#Paper_Title").text("")
 			d3.selectAll(".inactive").classed("inactive", false)
+			d3.select("#tooltip").style("display", "none");
 		})
 		.on("click", function (event, d){
 			console.log("Clicked node:", d);
