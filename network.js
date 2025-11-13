@@ -8,7 +8,7 @@ function simulate(data,svg)
 
    //calculate degree of the nodes:
     let node_degree={}; //initiate an object
-   d3.map(data.links, function (d){
+    d3.map(data.links, function (d){
 	   if (node_degree.hasOwnProperty(d.source))
 	   {
 		   node_degree[d.source]++
@@ -55,7 +55,7 @@ function simulate(data,svg)
    	}
    };
 
-	let scale_radius = d3.scaleLinear()
+	let scale_radius = d3.scaleSqrt()
 		.domain(d3.extent(Object.values(node_degree)))
 		.range([3,12])
 		
@@ -80,8 +80,8 @@ function simulate(data,svg)
 		.data(data.nodes)
 		.enter()
 		.append('g')
-	.attr("class", function (d){
-		return treatPublishersClass(d.Affiliation)})
+        .attr("class", function (d){
+            return treatPublishersClass(d.Affiliation)})
 		.on("mouseover", function (d){
 			d3.selectAll("#Paper_Title").text(d['Author Name'])
 			node_elements.classed("inactive",true)
@@ -107,10 +107,7 @@ function simulate(data,svg)
 				.style("left", (event.pageX + 10) + "px")
 				.style("top", (event.pageY - 10) + "px");
 		})
-		.on("mousemove", function(d){
-			d3.select("#tooltip").style("display", "none");
-		})
-	
+			
 	node_elements.append("circle")
 		.attr("r", function(d,i) {
 			
@@ -125,18 +122,62 @@ function simulate(data,svg)
 			return getNodeColor(d.Affiliation)
 		})
 	
-	let ForceSimulation = d3.forceSimulation(data.nodes)
-        .force("collide",
-            d3.forceCollide().radius(function (d,i){
-				return scale_radius(node_degree[d.id])*1.2}))
-        .force("x", d3.forceX())
-        .force("y", d3.forceY())
-        .force("charge", d3.forceManyBody())
-        .force("link",d3.forceLink(data.links)
-            .id(function (d){
-				return d.id})
-        )
-        .on("tick", ticked);
+	// create forces and expose parameters to UI
+	let chargeForce = d3.forceManyBody().strength(-30);
+	let collideMultiplier = 1.2; // multiplier for radius
+	let collideForce = d3.forceCollide().radius(function(d){
+		return scale_radius(node_degree[d.id]) * collideMultiplier;
+	});
+	let linkForce = d3.forceLink(data.links).id(function(d){ return d.id; }).strength(0.1);
+	let xForce = d3.forceX();
+	let yForce = d3.forceY();
+
+	let simulation = d3.forceSimulation(data.nodes)
+		.force("charge", chargeForce)
+		.force("collide", collideForce)
+		.force("link", linkForce)
+		.force("x", xForce)
+		.force("y", yForce)
+		.on("tick", ticked);
+
+	// Setup UI controls (if present in page)
+	function setupControls(){
+		const chargeInput = d3.select("#chargeRange");
+		const collideInput = d3.select("#collideRange");
+		const linkInput = d3.select("#linkRange");
+
+		if (!chargeInput.empty()){
+			chargeInput.on("input", function(){
+				const v = +this.value;
+				d3.select("#chargeValue").text(v);
+				chargeForce.strength(v);
+				simulation.alpha(1).restart();
+			});
+			d3.select("#chargeValue").text(chargeInput.property("value"));
+		}
+
+		if (!collideInput.empty()){
+			collideInput.on("input", function(){
+				collideMultiplier = +this.value;
+				d3.select("#collideValue").text(collideMultiplier);
+				collideForce.radius(function(d){ return scale_radius(node_degree[d.id]) * collideMultiplier; });
+				simulation.alpha(1).restart();
+			});
+			d3.select("#collideValue").text(collideInput.property("value"));
+		}
+
+		if (!linkInput.empty()){
+			linkInput.on("input", function(){
+				const v = +this.value;
+				d3.select("#linkValue").text(v);
+				linkForce.strength(v);
+				simulation.alpha(1).restart();
+			});
+			d3.select("#linkValue").text(linkInput.property("value"));
+		}
+	}
+
+	setupControls();
 
     function ticked()
     {
